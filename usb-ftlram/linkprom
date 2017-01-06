@@ -1,0 +1,62 @@
+/*  linkcmds
+ *
+ */
+
+OUTPUT_ARCH(sparc)
+__DYNAMIC  =  0;
+
+ENTRY(start)
+
+RAM_START	= 0x0d000000;
+RAM_LENGTH	= 0x00007000;
+RAM_END = RAM_START + RAM_LENGTH;
+
+
+MEMORY
+{
+  flash	: ORIGIN = 0x06000000, LENGTH = 128K
+  ram	: ORIGIN = 0x0d000000, LENGTH = 28k 
+  null	: ORIGIN = 0x00000000, LENGTH =   0K
+}
+
+
+SECTIONS
+{
+  .text :
+  {
+    text_start = .;
+    . = ALIGN (4);
+    *(.flashstart) 
+    *(.flashinit*) 
+    *(.text*) 
+    *(.rodata)
+    *(.rodata.str1.8)
+    *(.gnu.warning) 
+    *(.gnu.linkonce*) 
+    *(.init) 
+    *(.fini)
+    text_end = .;
+  } > flash
+
+  .data :
+  {
+    data_start = .;
+    . = ALIGN (4);
+    *(.data)
+    *(.data.*)
+  } > ram
+
+  .bss :
+  {
+    bss_start = .;
+    . = ALIGN (4);
+    *(.bss)
+    *(.bss.*)
+    *(COMMON)
+    bss_end = .;
+  } > ram
+
+}
+
+
+
